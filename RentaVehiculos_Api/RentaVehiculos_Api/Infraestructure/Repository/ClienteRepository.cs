@@ -3,6 +3,7 @@ using RentaVehiculos_Api.Aplication.DTOs;
 using RentaVehiculos_Api.Domain.Models;
 using RentaVehiculos_Api.Infraestructure.Data;
 using RentaVehiculos_Api.Infraestructure.Interfaces;
+using System.Data;
 using System.Net.NetworkInformation;
 using System.Reflection.PortableExecutable;
 
@@ -16,6 +17,7 @@ namespace RentaVehiculos_Api.Infraestructure.Repository
         {
             _context = acces;         
         }
+
 
         public async Task<List<ClienteReadDTO>>ObtenerClientes() { 
             var misClientes = new List<ClienteReadDTO>();
@@ -37,11 +39,52 @@ namespace RentaVehiculos_Api.Infraestructure.Repository
                     Nombre = cliente.Nombre,
                     Apellido = cliente.Apellido,
                     Dpi = cliente.Dpi
-                };
+                };  
 
                 misClientes.Add(dtoMap);
             }
             return misClientes;
+        }
+
+        public async Task<Clientes> ObtenerId(int id)
+        {
+            var misClientes = new Clientes();
+            using var conn = _context.GetConnection();
+            using var cmd = new SqlCommand("select * from Clientes where clienteId = @id ", conn);
+            //Agregar parámetro de forma segura
+            cmd.Parameters.Add("@Id", SqlDbType.Int).Value = id;
+
+            await conn.OpenAsync();
+            cmd.CommandType = CommandType.Text;
+            using var reader = await cmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                misClientes = new Clientes {
+                    ClienteId = reader.GetInt32(0),
+                    Nombre = reader.GetString(1),
+                    Apellido = reader.GetString(2),
+                    Dpi = reader.GetString(3)
+                };
+
+            }
+            return misClientes;
+        }
+        public async Task<int> NewCliente(ClienteCreateDTO newCliente)
+        {
+            var misClientes = new List<ClienteCreateDTO>();
+            using var conn = _context.GetConnection();
+            using var cmd = new SqlCommand("INSERT INTO Clientes (Nombre,Apellido,Dpi) VALUES (@Nombre,@Apellido,@Dpi);SELECT SCOPE_IDENTITY() ", conn);
+            await conn.OpenAsync();
+            
+
+            cmd.Parameters.AddWithValue("@Nombre", newCliente.Nombre);
+            cmd.Parameters.AddWithValue("@Apellido", newCliente.Apellido);
+            cmd.Parameters.AddWithValue("@Dpi", newCliente.Dpi);
+            var result = await cmd.ExecuteScalarAsync();
+
+
+
+            return Convert.ToInt32(result);
         }
     }
 }
