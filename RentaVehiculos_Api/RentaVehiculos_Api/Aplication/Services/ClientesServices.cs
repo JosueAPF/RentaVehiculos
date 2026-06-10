@@ -1,14 +1,15 @@
 ﻿using RentaVehiculos_Api.Aplication.DTOs;
 using RentaVehiculos_Api.Aplication.Interfaces;
-using RentaVehiculos_Api.Infraestructure.Repository;
+using RentaVehiculos_Api.Infraestructure.Interfaces;
+
 
 namespace RentaVehiculos_Api.Aplication.Services
 {
     public class ClientesServices: IClientesServices
     {
-        private readonly ClienteRepository _repo;
+        private readonly IRepository _repo;
 
-        public ClientesServices(ClienteRepository repo)
+        public ClientesServices(IRepository repo)
         {
             _repo = repo;
         }

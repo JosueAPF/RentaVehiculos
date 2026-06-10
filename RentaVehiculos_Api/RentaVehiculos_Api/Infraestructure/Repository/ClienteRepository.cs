@@ -2,12 +2,13 @@
 using RentaVehiculos_Api.Aplication.DTOs;
 using RentaVehiculos_Api.Domain.Models;
 using RentaVehiculos_Api.Infraestructure.Data;
+using RentaVehiculos_Api.Infraestructure.Interfaces;
 using System.Net.NetworkInformation;
 using System.Reflection.PortableExecutable;
 
 namespace RentaVehiculos_Api.Infraestructure.Repository
 {
-    public class ClienteRepository
+    public class ClienteRepository: IRepository
     {
         private readonly DataAcces _context;
 
