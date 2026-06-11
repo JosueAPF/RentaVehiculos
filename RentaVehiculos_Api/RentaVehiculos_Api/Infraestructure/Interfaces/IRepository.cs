@@ -8,5 +8,7 @@ namespace RentaVehiculos_Api.Infraestructure.Interfaces
         Task<List<ClienteReadDTO>> ObtenerClientes();
         Task<Clientes> ObtenerId(int id);
         Task<int> NewCliente(ClienteCreateDTO newCliente);
+        Task<ClienteReadDTO> UpdateCliente(int id, ClienteUpdateDTO updateC);
+        Task<int> DeleteCliente(int id);
     }
 }

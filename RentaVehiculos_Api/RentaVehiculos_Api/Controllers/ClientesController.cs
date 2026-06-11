@@ -32,5 +32,24 @@ namespace RentaVehiculos_Api.Controllers
             var cliente = await _services.obtenerClienteId(nuevoCliente);
             return CreatedAtAction(nameof(GetClientId), new {id = cliente.ClienteId },cliente);
         }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateClientes(int id,[FromBody] ClienteUpdateDTO update) {
+            var actualizacion = await _services.UpdateCliente(id, update);
+            return Ok(actualizacion);
+            
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> EliminarCliente(int id) { 
+            var deleteClient = await _services.DelCliente(id);
+            if (deleteClient == 0) 
+            {
+                return BadRequest();
+            }
+            return NoContent();
+
+            
+        }
     }
 }
