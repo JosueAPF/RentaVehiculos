@@ -1,10 +1,10 @@
-﻿namespace RentaVehiculos_Api.Domain.RoleModels
+﻿namespace RentaVehiculos_Api.Aplication.DTOs
 {
-    public class User
+    public class UserReadDTO
     {
-        public int UsuarioId { get; set; }
         public string? Name { get; set; }
         public string? pass { get; set; }
+
         public DateTime FechaCreacion { get; set; }
     }
 }

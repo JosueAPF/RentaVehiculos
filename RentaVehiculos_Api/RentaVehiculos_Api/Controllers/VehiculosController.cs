@@ -21,5 +21,18 @@ namespace RentaVehiculos_Api.Controllers
             var obtenerVehiculos = await _servicio.obtenerVehiuclos();
             return obtenerVehiculos;
         }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<VehiculoReadDTO>> GetById(int id) {
+            var busquedaxId = await _servicio.ObtenerId(id);
+            return Ok(busquedaxId);
+        }
+
+        [HttpGet("CantidadVehiculos")]
+        public async Task<ActionResult> CountVehiculos() {
+            var cantidadVehiculos = await _servicio.CantidadVehiculos();
+            return Ok(cantidadVehiculos);
+        }
+        
     }
 }

@@ -6,5 +6,7 @@ namespace RentaVehiculos_Api.Aplication.Interfaces
     {
 
         Task<List<VehiculoReadDTO>> obtenerVehiuclos();
+        Task<VehiculoReadDTO> ObtenerId(int id);
+        Task<int> CantidadVehiculos();
     }
 }

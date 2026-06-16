@@ -29,5 +29,43 @@ namespace RentaVehiculos_Api.Aplication.Services
             }
 
         }
+
+        public async Task<VehiculoReadDTO> ObtenerId(int id) {
+            if (id == null) {
+                throw new ApplicationException("Error inserte un ID");
+            }
+
+            try
+            {
+                var misVehiculos = await _repo.BuscarXId(id);
+                return misVehiculos;
+
+            }
+            catch (SqlException ex)
+            {
+                throw new ApplicationException("Error Accesos a la Base de datos!", ex);
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Error Inesperado", ex);
+            }
+        }
+
+        public async Task<int> CantidadVehiculos() {
+            try
+            {
+                var misVehiculos = await _repo.CantidadVehiculosActuales();
+                return misVehiculos;
+
+            }
+            catch (SqlException ex)
+            {
+                throw new ApplicationException("Error Accesos a la Base de datos!", ex);
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Error Inesperado", ex);
+            }
+        }
     }
 }
