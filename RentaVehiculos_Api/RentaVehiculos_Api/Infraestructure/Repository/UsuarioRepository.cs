@@ -46,7 +46,7 @@ namespace RentaVehiculos_Api.Infraestructure.Repository
 
         }
 
-        public async Task<int> CrearUsuario_RolUsuario(UserCreateDto newUser) {
+        public async Task<string> CrearUsuario_RolUsuario(UserCreateDto newUser) {
             var hasher = new PasswordHasher<User>();
 
             var userEntity = new User
@@ -70,7 +70,7 @@ namespace RentaVehiculos_Api.Infraestructure.Repository
 
             await cmd_UserRol.ExecuteNonQueryAsync();//ejecuta sin retorno la consulta de insert
 
-            return Convert.ToInt32(UserId_);
+            return newUser.Name!;
 
         }
 

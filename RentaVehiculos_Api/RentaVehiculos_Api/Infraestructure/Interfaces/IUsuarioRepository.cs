@@ -6,7 +6,7 @@ namespace RentaVehiculos_Api.Infraestructure.Interfaces
     public interface IUsuarioRepository
     {
         Task<List<UserRoleReadDTO>> ObtenerUserRoles();
-        Task<int> CrearUsuario_RolUsuario(UserCreateDto newUser);
+        Task<string> CrearUsuario_RolUsuario(UserCreateDto newUser);
         Task<UserReadDTO> ObtenerNombre(string? Name);
     }
 }
