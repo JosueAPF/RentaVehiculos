@@ -7,6 +7,7 @@ using RentaVehiculos_Api.Aplication.Services;
 using RentaVehiculos_Api.Infraestructure.Data;
 using RentaVehiculos_Api.Infraestructure.Interfaces;
 using RentaVehiculos_Api.Infraestructure.Repository;
+using System.Security.Claims;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -41,12 +42,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         ClockSkew = TimeSpan.Zero,
 
         IssuerSigningKey = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(jwt["Key"])
+            Encoding.UTF8.GetBytes(jwt["Key"]!)
         ),
+        RoleClaimType = ClaimTypes.Role,
         ValidIssuer = jwt["Issuer"],
-        ValidAudience = jwt["Audience"]
+        ValidAudience = jwt["Audience"],
+      
     };
-});
+}); builder.Services.AddAuthorization();
 
 
 builder.Services.AddControllers();
@@ -97,7 +100,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 //activar el midleware de jwt
-app.UseAuthentication();   
+app.UseAuthentication();
 
 app.UseAuthorization();
 

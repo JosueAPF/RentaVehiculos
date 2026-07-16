@@ -1,14 +1,12 @@
 ﻿using RentaVehiculos_Api.Domain.RoleModels;
-using System.Text.Json.Serialization;
 
 namespace RentaVehiculos_Api.Aplication.DTOs
 {
-    public class UserCreateDto
+    public class UserRolDTO
     {
-        [JsonIgnore]
         public int UsuarioId { get; set; }
         public string? Name { get; set; }
         public string? pass { get; set; }
-       
+        public List<Roles> Roles { get; set; } = new();
     }
 }

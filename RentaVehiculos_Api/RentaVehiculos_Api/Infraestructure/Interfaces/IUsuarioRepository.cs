@@ -8,5 +8,6 @@ namespace RentaVehiculos_Api.Infraestructure.Interfaces
         Task<List<UserRoleReadDTO>> ObtenerUserRoles();
         Task<string> CrearUsuario_RolUsuario(UserCreateDto newUser);
         Task<UserReadDTO> ObtenerNombre(string? Name);
+        Task<UserRoleReadDTO?> GetRoles(int userId);
     }
 }

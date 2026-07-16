@@ -34,9 +34,6 @@ namespace RentaVehiculos_Api.Infraestructure.Repository
                 {
                      UserId = result.GetInt32(0),
                      Name = result.GetString(1),
-                     Role = result.GetString(2) 
-                     
-
                 };
 
                 miUserRole.Add(user1);
@@ -53,7 +50,7 @@ namespace RentaVehiculos_Api.Infraestructure.Repository
             {
                 Name = newUser.Name
             };
-            var hashedPassword = hasher.HashPassword(userEntity, newUser.pass);
+            var hashedPassword = hasher.HashPassword(userEntity, newUser.pass!);
 
             using var conn = _acces.GetConnection();
             await conn.OpenAsync();
@@ -78,10 +75,10 @@ namespace RentaVehiculos_Api.Infraestructure.Repository
             var usuarioDTO = new UserReadDTO();
             using var conn = _acces.GetConnection();
             await conn.OpenAsync();
-            using var cmd = new SqlCommand("select * from [dbo].[User] where Name = @Name",conn);
+            using var cmd = new SqlCommand("select * from [dbo].[User] where Name = @Nombre",conn);
 
-            cmd.Parameters.AddWithValue("@Name", Name);
-            cmd.CommandType = CommandType.Text;
+            cmd.Parameters.AddWithValue("@Nombre", Name);
+            
             using var reader = await cmd.ExecuteReaderAsync();
             if (await reader.ReadAsync())
             {
@@ -93,15 +90,53 @@ namespace RentaVehiculos_Api.Infraestructure.Repository
                     FechaCreacion = reader.GetDateTime(3)
                 };
                 usuarioDTO = new UserReadDTO { 
+                    UsuarioId = miUser.UsuarioId,
                     Name = miUser.Name,
                     pass = miUser.pass,
                     FechaCreacion = miUser.FechaCreacion
                 };
 
+
             }
+            Console.WriteLine("Repo obtener nombre :" + usuarioDTO.ToString());
             return usuarioDTO;
 
 
+        }
+
+
+        public async Task<UserRoleReadDTO?> GetRoles(int userId) {
+
+            using var conn = _acces.GetConnection();
+            await conn.OpenAsync();
+            using var cmd = new SqlCommand(@"
+                                            select u.UsuarioId,u.Name,r.Roles from [dbo].[UserRoles] ur
+                                            inner join [dbo].[Roles] r on r.RolId = ur.RolesId
+                                            inner join [dbo].[User] u on u.UsuarioId = ur.UserId
+                                            where u.UsuarioId = @id", conn);   
+            cmd.Parameters.AddWithValue("@id", userId);
+
+            using var reader = await cmd.ExecuteReaderAsync();
+            UserRoleReadDTO? user = null;
+            while (await reader.ReadAsync()) {
+
+                if (user == null)
+                {
+
+                    user = new UserRoleReadDTO
+                    {
+                        UserId = reader.GetInt32(0),
+                        Name = reader.GetString(1),
+                        Role = new List<string>()
+                    };
+                }
+                user.Role.Add(reader.GetString(2));
+                Console.WriteLine(user.Role.Count());
+
+
+            }
+
+            return user;
         }
     }
 }

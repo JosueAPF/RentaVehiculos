@@ -11,7 +11,7 @@ namespace RentaVehiculos_Api.Aplication.Services
     {
         private readonly IUsuarioRepository _repo;
         private readonly JwtHelper _jwt;
-        public AuthService(IUsuarioRepository repo,JwtHelper jwt)
+        public AuthService(IUsuarioRepository repo, JwtHelper jwt)
         {
             _repo = repo;
             _jwt = jwt;
@@ -34,17 +34,17 @@ namespace RentaVehiculos_Api.Aplication.Services
 
         public async Task<List<UserRoleReadDTO>> ObtenerUserRole() {
 
-            try { 
+            try {
                 var UserRoles = await _repo.ObtenerUserRoles();
                 return UserRoles;
             } catch (SqlException ex) {
-                throw new ApplicationException("Error en la consulta sql!",ex);
+                throw new ApplicationException("Error en la consulta sql!", ex);
             } catch (Exception ex) {
-                throw new ApplicationException("Error Interno!",ex);
+                throw new ApplicationException("Error Interno!", ex);
             }
 
 
-        
+
         }
 
         public async Task<string> Crear_Usuario(UserCreateDto user) {
@@ -63,29 +63,62 @@ namespace RentaVehiculos_Api.Aplication.Services
             }
         }
 
-        public async Task<string> Login(UserCreateDto dto)
+        public async Task<string> Login(User dto)
         {
             if (string.IsNullOrEmpty(dto.Name) || string.IsNullOrEmpty(dto.pass)) {
-                return null;
+                return null!;
             }
 
-            var user = await _repo.ObtenerNombre(dto.Name);
+            var userModel = await _repo.ObtenerNombre(dto.Name);
             var userConvert = new User
             {
-                Name = user.Name,
-                pass = user.pass
+                UsuarioId = userModel.UsuarioId,
+                Name = userModel.Name,
+                pass = userModel.pass,
+                FechaCreacion = userModel.FechaCreacion
             };
-            
+
+            Console.WriteLine("Servicio :" + userConvert.ToString());
 
             var hasher = new PasswordHasher<User>();
 
-            var result = hasher.VerifyHashedPassword(userConvert, userConvert.pass!, dto.pass);
+            var result = hasher.VerifyHashedPassword(userConvert, userModel.pass!, dto.pass);
 
             if (result == PasswordVerificationResult.Failed)
-                return null;
+                return null!;
 
-            return _jwt.GenerarToken(userConvert);
-         
+            var rolesList = new List<string>();
+            var roles = await _repo.GetRoles(userConvert.UsuarioId);
+           
+
+            if (roles != null && roles.Role != null)
+            {
+                rolesList = roles.Role;
+            }
+
+            Console.WriteLine("Roles count: " + rolesList.Count);
+
+
+            return _jwt.GenerarToken(userConvert, rolesList);
+
         }
+
+        public async Task<UserRoleReadDTO?> GetRole_userId(int id) {
+            try
+            {
+                var getRole = await _repo.GetRoles(id);
+                return getRole;
+            }
+            catch (SqlException ex)
+            {
+                throw new ApplicationException("Error en la consulta sql!", ex);
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Error Interno!", ex);
+            }
+        }
+
+      
     }
 }

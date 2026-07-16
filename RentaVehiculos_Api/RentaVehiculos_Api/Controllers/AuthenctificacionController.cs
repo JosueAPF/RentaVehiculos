@@ -3,10 +3,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RentaVehiculos_Api.Aplication.DTOs;
 using RentaVehiculos_Api.Aplication.Services;
+using RentaVehiculos_Api.Domain.RoleModels;
 
 namespace RentaVehiculos_Api.Controllers
 {
-    [AllowAnonymous]
+   
     [Route("api/[controller]")]
     [ApiController]
     public class AuthenctificacionController : ControllerBase
@@ -17,14 +18,23 @@ namespace RentaVehiculos_Api.Controllers
         {
             _service = service;
         }
+       
 
         [HttpPost("Loggin")]
+        [AllowAnonymous]
         public async Task<ActionResult> Login([FromBody] UserCreateDto dto) {
-            var login = await _service.Login(dto);
+            var LoginUser = new User { 
+                UsuarioId = dto.UsuarioId,
+                Name = dto.Name,    
+                pass = dto.pass,
+               
+            };
+            Console.WriteLine("Api :"+LoginUser.ToString());
+            var login = await _service.Login(LoginUser);
             return Ok(login);
         }
 
-        [HttpGet]
+        [HttpGet("GetRoles")]
         [Authorize(Roles = "Cliente")]
         public async Task<ActionResult> ObtenerUserRoles() {
             var verUserRoles = await _service.ObtenerUserRole();
@@ -43,6 +53,13 @@ namespace RentaVehiculos_Api.Controllers
         public async Task<ActionResult> CrearUsuario([FromBody]UserCreateDto dto) {
             var newUsuario = await _service.Crear_Usuario(dto);
             return CreatedAtAction(nameof(ObtenerxNombre), new { name = dto.Name }, newUsuario);
+        }
+
+        //obtener los roles segun el id de usuario
+        [HttpGet("Rol/{id}")]
+        public async Task<ActionResult> GetmyRol(int id) {
+            var obtenerRol = await _service.GetRole_userId(id);
+            return Ok(obtenerRol);  
         }
     }
 }

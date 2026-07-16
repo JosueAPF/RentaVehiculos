@@ -19,19 +19,27 @@ namespace RentaVehiculos_Api.Aplication.Helpers
             _config = config;   
         }
 
-        public string GenerarToken(User user) {
-            var claims = new[]{
+        public string GenerarToken(User user,List<string>Roles) {
+            //crear una lista de tipo Claim
+            var misclaims = new List<Claim>{
                 new Claim(ClaimTypes.NameIdentifier,user.UsuarioId.ToString()),
-                new Claim(ClaimTypes.Name, user.Name)
+                new Claim(ClaimTypes.Name, user.Name!)
             };
+            //claims de Roles
+            foreach (var rol in Roles)
+            {
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
+                misclaims.Add(new Claim(ClaimTypes.Role, rol));
+            }
+
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["jwt:Key"]!));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
                     issuer: _config["jwt:Issuer"],
                     audience: _config["jwt:Audience"],
-                    claims: claims,
+                    claims: misclaims,
                     expires: DateTime.Now.AddHours(1),
                     signingCredentials: creds
             );
