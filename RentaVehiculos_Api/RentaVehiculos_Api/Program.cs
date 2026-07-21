@@ -16,13 +16,15 @@ var builder = WebApplication.CreateBuilder(args);
 //Data acces 
 builder.Services.AddScoped<DataAcces>();
 //Repositorys
-builder.Services.AddScoped<IRepository, ClienteRepository>();
-builder.Services.AddScoped<IVehiculosRopository,VehiculosRepository>(); 
+builder.Services.AddScoped<IRepository, ClienteRepository>();//clientes
+builder.Services.AddScoped<IVehiculosRopository,VehiculosRepository>(); //vehiculos
+builder.Services.AddScoped<IRentaRepository, RentaRepository>();//rentas
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();//jwt
-builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<AuthService>();//authentificacion usuario permiso roles
 //Services's
 builder.Services.AddScoped<IClientesServices, ClientesServices>();
 builder.Services.AddScoped<IVehiculoServices, VehiculoServices>();
+builder.Services.AddScoped<IRentaServicio,RentaServicio>();
 
 //servicio de jwt
 builder.Services.AddScoped<JwtHelper>();
