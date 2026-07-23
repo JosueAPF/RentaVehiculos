@@ -1,4 +1,5 @@
 ﻿using RentaVehiculos_Api.Aplication.DTOs;
+using RentaVehiculos_Api.Domain.Models;
 
 namespace RentaVehiculos_Api.Infraestructure.Interfaces
 {
@@ -8,5 +9,7 @@ namespace RentaVehiculos_Api.Infraestructure.Interfaces
         Task<VehiculoReadDTO> BuscarXId(int id);
 
         Task<int> CantidadVehiculosActuales();
+
+        Task<List<Vehiculos_Disponibles_View>> VehiculosDisponibles();
     }
 }

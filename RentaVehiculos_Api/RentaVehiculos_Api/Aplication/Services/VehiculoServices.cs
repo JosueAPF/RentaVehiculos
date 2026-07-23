@@ -1,6 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
 using RentaVehiculos_Api.Aplication.DTOs;
 using RentaVehiculos_Api.Aplication.Interfaces;
+using RentaVehiculos_Api.Domain.Models;
 using RentaVehiculos_Api.Infraestructure.Interfaces;
 
 namespace RentaVehiculos_Api.Aplication.Services
@@ -55,6 +56,25 @@ namespace RentaVehiculos_Api.Aplication.Services
             try
             {
                 var misVehiculos = await _repo.CantidadVehiculosActuales();
+                return misVehiculos;
+
+            }
+            catch (SqlException ex)
+            {
+                throw new ApplicationException("Error Accesos a la Base de datos!", ex);
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Error Inesperado", ex);
+            }
+        }
+
+        public async Task<List<Vehiculos_Disponibles_View>> VerVehiculos_Disponibles()
+        {
+           
+            try
+            {
+                var misVehiculos = await _repo.VehiculosDisponibles();
                 return misVehiculos;
 
             }

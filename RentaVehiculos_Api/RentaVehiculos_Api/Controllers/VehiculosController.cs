@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RentaVehiculos_Api.Aplication.DTOs;
 using RentaVehiculos_Api.Aplication.Interfaces;
@@ -17,6 +18,7 @@ namespace RentaVehiculos_Api.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Cliente,Admin")]
         public async Task<ActionResult<List<VehiculoReadDTO>>> GetAllVehiculos() {
             var obtenerVehiculos = await _servicio.obtenerVehiuclos();
             return obtenerVehiculos;
@@ -32,6 +34,12 @@ namespace RentaVehiculos_Api.Controllers
         public async Task<ActionResult> CountVehiculos() {
             var cantidadVehiculos = await _servicio.CantidadVehiculos();
             return Ok(cantidadVehiculos);
+        }
+
+        [HttpGet("VehiculosDisponibles")]
+        public async Task<ActionResult> VerDisponivilidad() { 
+            var disonibles = await _servicio.VerVehiculos_Disponibles();
+            return Ok(disonibles);
         }
         
     }

@@ -97,5 +97,34 @@ namespace RentaVehiculos_Api.Infraestructure.Repository
 
         }
 
+
+        public async Task<List<Vehiculos_Disponibles_View>> VehiculosDisponibles() {
+            var ListadoDisponibles = new List<Vehiculos_Disponibles_View>();
+            using var conn = _dataAcces.GetConnection();
+            await conn.OpenAsync();
+            using var cmd = new SqlCommand("select * from [dbo].[vw_VehiculosDisponibles]", conn);
+
+            using var result = await cmd.ExecuteReaderAsync();
+            while (await result.ReadAsync())
+            {
+                var disponibles = new Vehiculos_Disponibles_View
+                {
+                    Id = Convert.ToInt32(result["id"]),
+                    Marca = result["Marca"].ToString()!,
+                    Modelo = result["Modelo"].ToString()!,
+                    Placa = result["Placa"].ToString()!,
+                    Color = result["Color"].ToString()!,
+                    Anio = Convert.ToInt32(result["Anio"]),
+                    Estado = result["Estado"].ToString()!,
+                    TarifaDiaria = Convert.ToDecimal(result["TarifaDiaria"])
+
+                };
+                ListadoDisponibles.Add(disponibles);
+            }
+
+            return ListadoDisponibles;
+
+        }
+
     }
 }

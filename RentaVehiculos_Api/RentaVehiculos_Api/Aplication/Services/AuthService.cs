@@ -63,6 +63,23 @@ namespace RentaVehiculos_Api.Aplication.Services
             }
         }
 
+        public async Task<string> Crear_Admin(UserCreateDto user)
+        {
+            try
+            {
+                var CreateUser = await _repo.CrearUsuario_RolAdmin(user);
+                return CreateUser;
+            }
+            catch (SqlException ex)
+            {
+                throw new ApplicationException("Error en la consulta sql!", ex);
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Error Interno!", ex);
+            }
+        }
+
         public async Task<string> Login(User dto)
         {
             if (string.IsNullOrEmpty(dto.Name) || string.IsNullOrEmpty(dto.pass)) {

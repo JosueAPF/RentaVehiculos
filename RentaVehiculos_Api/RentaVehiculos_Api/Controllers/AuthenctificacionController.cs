@@ -35,7 +35,7 @@ namespace RentaVehiculos_Api.Controllers
         }
 
         [HttpGet("GetRoles")]
-        [Authorize(Roles = "Cliente")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> ObtenerUserRoles() {
             var verUserRoles = await _service.ObtenerUserRole();
             return Ok(verUserRoles);
@@ -52,6 +52,15 @@ namespace RentaVehiculos_Api.Controllers
         [HttpPost("CreateUsers")]
         public async Task<ActionResult> CrearUsuario([FromBody]UserCreateDto dto) {
             var newUsuario = await _service.Crear_Usuario(dto);
+            return CreatedAtAction(nameof(ObtenerxNombre), new { name = dto.Name }, newUsuario);
+        }
+
+        //api exclusivamente para crear usuarios
+        [HttpPost("CreateAdmin")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult> CrearAdmin([FromBody] UserCreateDto dto)
+        {
+            var newUsuario = await _service.Crear_Admin(dto);
             return CreatedAtAction(nameof(ObtenerxNombre), new { name = dto.Name }, newUsuario);
         }
 

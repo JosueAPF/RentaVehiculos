@@ -11,13 +11,14 @@ namespace RentaVehiculos_Api.Controllers
     public class RentasController(IRentaServicio servicio) : ControllerBase
     {
         [HttpGet]
-        [Authorize(Roles = "Cliente")]//cambiar a un rol mas logico pendejo
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> VerRentas() {
             var listadoRenta =  await servicio.Mostrar_Rentas();
             return Ok(listadoRenta);
         }
 
         [HttpPost("NuevaRenta")]
+        [Authorize(Roles = "Cliente")]
         //aqui si pude ser un cliente
         public async Task<ActionResult> RentaNueva(Rentas_SP renta) {
             var miRenta = await servicio.NevaRenta(renta);
@@ -27,6 +28,7 @@ namespace RentaVehiculos_Api.Controllers
 
         //actualizacion del estado renta en fecha_fin_real y monto_final a pagar
         [HttpPost("FinRenta")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> FinalizarRenta(Rentas_SP_Finalizar renta) {
             var finRenta = await servicio.Finalizacion_renta(renta);
             return Ok("Renta Finalizada");    

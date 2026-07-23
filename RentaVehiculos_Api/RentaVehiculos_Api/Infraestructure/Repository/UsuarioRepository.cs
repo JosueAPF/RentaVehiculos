@@ -71,6 +71,36 @@ namespace RentaVehiculos_Api.Infraestructure.Repository
 
         }
 
+
+        public async Task<string> CrearUsuario_RolAdmin(UserCreateDto newUser)
+        {
+            var hasher = new PasswordHasher<User>();
+
+            var userEntity = new User
+            {
+                Name = newUser.Name
+            };
+            var hashedPassword = hasher.HashPassword(userEntity, newUser.pass!);
+
+            using var conn = _acces.GetConnection();
+            await conn.OpenAsync();
+            using var cmd = new SqlCommand(@"insert into [dbo].[User](Name,Pass)values(@Name,@Pass);SELECT SCOPE_IDENTITY()", conn);
+
+
+            cmd.Parameters.AddWithValue("@Name", newUser.Name);
+            cmd.Parameters.AddWithValue("@Pass", hashedPassword);
+
+
+            var UserId_ = await cmd.ExecuteScalarAsync();
+            using var cmd_UserRol = new SqlCommand(@"insert into UserRoles(UserId,RolesId) values(@UserId,1)", conn);//3 es rol Usuario
+            cmd_UserRol.Parameters.AddWithValue("@UserId", Convert.ToInt32(UserId_));
+
+            await cmd_UserRol.ExecuteNonQueryAsync();//ejecuta sin retorno la consulta de insert
+
+            return newUser.Name!;
+
+        }
+
         public async Task<UserReadDTO> ObtenerNombre(string? Name) {
             var usuarioDTO = new UserReadDTO();
             using var conn = _acces.GetConnection();
